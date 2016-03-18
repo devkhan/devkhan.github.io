@@ -11,7 +11,17 @@ I cannot summarize what this project is about better than @shiftkey has describe
 
 Right now, Octokit is a very large project with a lot of conceptually different parts, loosely connected together by the efforts of some very talented people. But, still, to maintain the increasing complexity of the GitHub API, there is a need to break it down to into multiple components. One of the major components is the HTTP calling part, which is completely independent of the particulars of the API. It inlcudes re-writing the actual HTTP plumbing, getting the abstractions right, enabling Octokit's users to plug in their own HTTP client with modified behaviour such as custom caching, timeout, among other things.
 
-**I will make a lot of references and quotes, mostly from Octokit's conversations. No copyright infringement intended.**
+**I will make a lot of references to existing material and PRs, mostly from Octokit's conversations. No copyright infringement intended.**
+
+### Why I want to do this
+
+- Solving problems by software
+	+ I feel proud if my work contributes to the betterment of current research in system and computational biology. That rewarding feeling fills me up with even more energy to keep up my work. So, if I can help anyone by the means of this project, it would be an achievement for me. I am also very much intrigued by the detailed implementation of software concepts such as data structures, algorithms, files, software development, etc.
+- Working with Octokit
+	+ I started a project for writing a client library (also in .NET) for the WP-API WordPress plugin, through which I learnt a lot of things. But since I was working alone on that project, it was not so much of a joy ride after a while. I have still kept in mind to complete that project one day. But knowing about Octokit.NET, going through the docs, digging deep into the classes and interfaces, writing tests, all of these have got me pretty excited about doing more and more in Octokit. In just the past two weeks, a learned so much from Octokit and the great community behind it, I'm sure, I's learn much much more if I can do a whole project under Octokit.
+- Open Source 
+	+ This is a fundamental and probably the most important reason for me to take up this project. During the last year and a half or so, I have come to known the real value of OSS. I am a firm believer of OSS. Nowadays, open source is an integral part of my workflow and everything I do and that is why almost all of my work has been open sourced. The first thing I do on when I open my system is open GitHub and I am constantly on the hunt for new and exciting open projects.
+
 
 ### What will be the outcome?™
 
@@ -45,15 +55,40 @@ The current structure of the project is as somewhat below:
 - All of these clients call the methods of IApiConnection, which in turn calls the methods of IConnection, which finally calls out the HttpClientAdapter.
 - There are also many other things, but they are secondary to the problem which this project addresses.
 
+
 ![Dependency Diagram](DependencyGraphSnapshot.png "Dependency Diagram for HTTP internals of Octokit")
 
-As I mentioned, the most important part is GitHubClient will take an HttpClient as a parameter instead of an IConnection, which provides a friendly wrapper around the low-level calls of HttpClientAdapter. We will have a direct dependency on System/Microsoft's HttpClient. 
+### Points to be focused on
 
+- As I mentioned, the most important part is GitHubClient will take an HttpClient as a parameter instead of an IConnection, which provides a friendly wrapper around the low-level calls of HttpClientAdapter. We will have a direct dependency on System/Microsoft's HttpClient. 
 
+- The overall structure of the HTTP internals of Octokit are represented in the figure. Ignoring the higher level types of RepositoriesClient and RepositoriesClientException, we see a direct and an indirect dependency of IGitHubClient on Connection. This is due to ctor IGitHubClient(IConnection). 
+
+- This dependency needs to be changed or modified in order to decouple the GitHubClient and the HTTP plumbing.
+
+- As @shiftkey attempted in #985, we have to drop the support of many ctors including the ones taking ProcutHeaderValue. This stems from the fact that ProdcutHeaderValue needs to be added to every request, and I wouldn't change for any one instance of GitHubClient. So, it will also be delegated to the HttpClient and added as one of the options of the HttpClient.
+
+### Project Timeline
+
+#### //TODO
+
+### What can be done afterwards?
+
+#### //TODO
 
 ### Why me?
 
+- Eager to learn
+- Relevant Skills/Experience
+	+ GitHub profile
+	+ Contribution to Octokit
+- Past Projects
+	+ Open source contributions
+- Good communication
+	+ Constantly updating
+	+ Connectivity
 
+### Important points/precautions/commitments/etc.
 
 *Namaste*
 
