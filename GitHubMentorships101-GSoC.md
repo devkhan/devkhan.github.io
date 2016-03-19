@@ -66,7 +66,23 @@ The current structure of the project is as somewhat below:
 
 - This dependency needs to be changed or modified in order to decouple the GitHubClient and the HTTP plumbing.
 
-- As @shiftkey attempted in #985, we have to drop the support of many ctors including the ones taking ProcutHeaderValue. This stems from the fact that ProdcutHeaderValue needs to be added to every request, and I wouldn't change for any one instance of GitHubClient. So, it will also be delegated to the HttpClient and added as one of the options of the HttpClient.
+- As @shiftkey attempted in #985, we have to drop the support of many ctors including the ones taking ProcutHeaderValue. This stems from the fact that ProdcutHeaderValue needs to be added to every request, and it wouldn't change for any one instance of GitHubClient. So, it will also be delegated to the HttpClient and added as one of the options of the HttpClient.
+
+- Also, from the diagram, we can see that currently Octokit has another HTTP layer in the form of IHttpClient which is an abstraction over System/Microsoft's HttpClient. This extra layer will be removed and instead we will have a HttpClientFactory/Builder which builds upon the framework's HttpClient by changing behaviour as specified by the user in ClientOptions.
+
+- Coming to the point of ClientInfo, we can have the following options which can be configured in the HttpClient using the Factory or Builder.
+	+ AppName or ProductHeaderValue - Discussion [here](https://github.com/octokit/octokit.net/pull/985#issuecomment-163775168) by @haacked. As the GitHub API requires you to have a product header in the User Agent header or else the rate limit applies. This may be kept optional as there are some use cases where a person just want to make a few calls for one-off scripts.
+	+ Authorization headers/Credentials - This is required if rate limit kicks in or accessing parts where anaonymous access isn't allowed. The reason this should be moved to the HttpClient is because it also has to be provided in the header for most of the requests.
+	+ BaseAdress (in case of Enterprise) - This is pretty obvious.
+	+ Timeout - As discussed in #965, the current hardcoded default value for the timeout is 100 seconds, which is sufficient for most of the cases, but in some cases may be less and in other may be too much, as the user shouldn't wait 100 seconds before getting a failure response for small queries. Whether it be globally or per-request basis as mentioned by @distantcam in #985, a configurable timeout options is required in the HttpClient.
+	+ Preview headers - This can be argued over, but since some parts of the GitHub API first enter preview mode and require an extra header for accessing. One use case can be if someone explicitly is trying to test the preview features, they can fix the preview header in the HttpClient.
+
+- Lack of any conversation on #530 for months shows that ther nto has been much work done for improving caching in Octokit. We can either cache the response in the HTTP layer as discussed in #369 or making a data store somewhere. If we choose the HTTP route, then it has to be done in the HTTP part.
+
+//TODO - As I don't have much knowledge and experience in this, can you please help me out here?
+
+
+
 
 ### Project Timeline
 
