@@ -4,12 +4,15 @@
 ###### Mentoring Organization: GitHub
 ###### Mentor: Brendan Forster @shiftkey
 
+**BF:** As a suggestion, a Google Doc would make for a quicker process for giving feedback and editing
 
 ### What the project is about?
 
 I cannot summarize what this project is about better than @shiftkey has described it [here](https://github.com/octokit/octokit.net/issues/781) and [here](https://github.com/octokit/octokit.net/issues/984). But still, to show that I understand what this project aims at, I'll give it a shot.
 
 Right now, Octokit is a very large project with a lot of conceptually different parts, loosely connected together by the efforts of some very talented people. But, still, to maintain the increasing complexity of the GitHub API, there is a need to break it down to into multiple components. One of the major components is the HTTP calling part, which is completely independent of the particulars of the API. It inlcudes re-writing the actual HTTP plumbing, getting the abstractions right, enabling Octokit's users to plug in their own HTTP client with modified behaviour such as custom caching, timeout, among other things.
+
+**BF:** simplify this section to focus on the HTTP stack - you know enough to not need my words here :)
 
 **I will make a lot of references to existing material and PRs, mostly from Octokit's conversations. No copyright infringement intended.**
 
@@ -75,22 +78,33 @@ The current structure of the project is as somewhat below:
 	+ Authorization headers/Credentials - This is required if rate limit kicks in or accessing parts where anaonymous access isn't allowed. The reason this should be moved to the HttpClient is because it also has to be provided in the header for most of the requests.
 	+ BaseAdress (in case of Enterprise) - This is pretty obvious.
 	+ Timeout - As discussed in #965, the current hardcoded default value for the timeout is 100 seconds, which is sufficient for most of the cases, but in some cases may be less and in other may be too much, as the user shouldn't wait 100 seconds before getting a failure response for small queries. Whether it be globally or per-request basis as mentioned by @distantcam in #985, a configurable timeout options is required in the HttpClient.
+
+**BF:** let's simplify this down to indicate that
+  - we're aware of the relevant scenarios around controlling timeout,
+  - we need to be mindful of how usable our implementation is for the consumer
+  - we may need to change Octokit further, but this should not be in scope
+
 	+ Preview headers - This can be argued over, but since some parts of the GitHub API first enter preview mode and require an extra header for accessing. One use case can be if someone explicitly is trying to test the preview features, they can fix the preview header in the HttpClient.
+
+**BF:** as changing the `Accept` header will likely change the response content received, it is not expected that external callers will be interested in this behaviour. And if they are trying this, Octokit will likely override this when necessary and set it when invoking the preview API.
 
 - Lack of any conversation on #530 for months shows that ther nto has been much work done for improving caching in Octokit. We can either cache the response in the HTTP layer as discussed in #369 or making a data store somewhere. If we choose the HTTP route, then it has to be done in the HTTP part.
 
 //TODO - As I don't have much knowledge and experience in this, can you please help me out here?
 
-
-
+**BF:** there are existing libraries out there for doing caching - Tavis.HttpCache is a good example - but as these are implemented as handlers for HttpClient you shouldn't need to worry about these in the scope of the project.
 
 ### Project Timeline
 
 #### //TODO
 
+**BF:** I'd love to see this section expanded on before the others
+
 ### What can be done afterwards?
 
 #### //TODO
+
+**BF:** let's not worry about this unless you have extra time on the proposal
 
 ### Why me?
 
