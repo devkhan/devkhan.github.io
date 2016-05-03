@@ -1,3 +1,168 @@
-नमस्ते विश्व
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Expression Viewer</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="https://github.com/angular-ui-tree/angular-ui-tree/raw/master/dist/angular-ui-tree.min.css">
+		<style>
+			.btn {
+			    margin-right: 8px;
+			}
 
-	- देवेश खण्डेलवाल
+			.angular-ui-tree-handle {
+			    background: #f8faff;
+			    border: 1px solid #dae2ea;
+			    color: #7c9eb2;
+			    padding: 10px 10px;
+			}
+
+			.angular-ui-tree-handle:hover {
+			    color: #438eb9;
+			    background: #f4f6f7;
+			    border-color: #dce2e8;
+			}
+
+			.angular-ui-tree-placeholder {
+			    background: #f0f9ff;
+			    border: 2px dashed #bed2db;
+			    -webkit-box-sizing: border-box;
+			    -moz-box-sizing: border-box;
+			    box-sizing: border-box;
+			}
+
+			tr.angular-ui-tree-empty {
+			    height:100px
+			}
+
+			.group-title {
+			    background-color: #687074 !important;
+			    color: #FFF !important;
+			}
+
+
+			/* --- Tree --- */
+			.tree-node {
+			    border: 1px solid #dae2ea;
+			    background: #f8faff;
+			    color: #7c9eb2;
+			}
+
+			.nodrop {
+			    background-color: #f2dede;
+			}
+
+			.tree-node-content {
+			    margin: 10px;
+			}
+			.tree-handle {
+			    padding: 10px;
+			    background: #428bca;
+			    color: #FFF;
+			    margin-right: 10px;
+			}
+
+			.angular-ui-tree-handle:hover {
+			}
+
+			.angular-ui-tree-placeholder {
+			    background: #f0f9ff;
+			    border: 2px dashed #bed2db;
+			    -webkit-box-sizing: border-box;
+			    -moz-box-sizing: border-box;
+			    box-sizing: border-box;
+			}
+
+			ul {
+				list-style: none;
+			}
+
+			.expression-btn {
+				width: 100px;
+				align-self: right;
+			}
+
+			.row {
+				margin-top: 20px;
+			}
+
+			li {
+				padding-top: 5px;
+				padding-bottom: 5px;
+			}
+		</style>
+	</head>
+	<body data-ng-app="main" ng-controller="MainController as main">
+		<div class="container">
+			<div class="row">
+			  <div class="col-sm-12">
+			    <h3>Gene Expression Visualizer</h3>
+
+			    <button class="btn" ng-click="expandAll()">Expand all</button>
+			    <button class="btn" ng-click="collapseAll()">Collapse all</button>
+			  </div>
+			</div>
+			<div class="row">
+				<div ui-tree>
+					<ul ui-tree-nodes="" ng-model="list">
+						<li ng-repeat="system in list" ui-tree-node>
+							<div ui-tree-handle>
+								<div class="col-md-6">
+									<button class="btn" ng-click="system.expand=!system.expand">{{system.expand ? "-" : "+" }}</button>
+									{{system.rowLabel}}
+								</div ng-model="colors">
+								<button class="btn expression-btn" style="background-color:{{colors[system.values['Microarray']]}}">
+									{{system.values["Microarray"]}}
+								</button>
+								<button class="btn expression-btn" style="background-color:{{colors[system.values['IHC']]}}">
+									{{system.values["IHC"]}}
+								</button>
+							</div>
+							<ul ui-tree-nodes="" ng-model="system.children" ng-if="system.expand">
+								<li ng-repeat="organ in system.children" ui-tree-node>
+									<div ui-tree-handle>
+										<div class="col-md-6">
+											<button class="btn" ng-click="organ.expand=!organ.expand">{{organ.expand ? "-" : "+" }}</button>
+											{{organ.rowLabel}}
+										</div>
+										<button class="btn expression-btn" style="background-color:{{colors[organ.values['Microarray']]}}">
+											{{organ.values["Microarray"]}}
+										</button>
+										<button class="btn expression-btn" style="background-color:{{colors[organ.values['IHC']]}}">
+											{{organ.values["IHC"]}}
+										</button>
+									</div>
+									<ul ui-tree-nodes="" ng-model="organ.children" ng-if="organ.expand">
+										<li ng-repeat="cell in organ.children" ui-tree-node>
+											<div ui-tree-handle>
+												<div class="col-md-6">
+													{{cell.rowLabel}}
+												</div>
+												<div class="col-md-6">
+													<button class="btn expression-btn" style="background-color:{{colors[cell.values['Microarray']]}}">
+														{{cell.values["Microarray"]}}
+													</button>
+													<button class="btn expression-btn" style="background-color:{{colors[cell.values['IHC']]}}">
+														{{cell.values["IHC"]}}
+													</button>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<footer></footer>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.2/angular-route.min.js"></script>
+		<script src="https://github.com/angular-ui-tree/angular-ui-tree/raw/master/dist/angular-ui-tree.min.js"></script>
+		<script src="app.js"></script>
+	</body>
+</html>
