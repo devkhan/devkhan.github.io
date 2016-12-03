@@ -152,20 +152,20 @@
 
 			ga('create', 'UA-80284198-2', 'auto');
 			ga('send', 'pageview');
-			ga('require', 'eventTracker');
-			ga('require', 'outboundLinkTracker');
-
-
 
 			Array.from(document.getElementsByTagName('a')).forEach( element => {
 				element.addEventListener('click', function (event) {
-					console.log(event.target.baseURI);
-					ga('send', 'event', {
+					event.preventDefault();
+					console.log(element.getAttribute('xlink:href'));
+					ga('send', {
+						hitType: 'event',
 						eventCategory: 'Links',
 						eventAction: 'click',
-						eventLabel: event.target.baseURI,
-						transport: 'beacon'
+						eventLabel: element.getAttribute('xlink:href')
 					});
+					setTimeout(function() {
+						window.location = element.getAttribute('xlink:href');
+					}, 1000);
 				});
 			});
 
